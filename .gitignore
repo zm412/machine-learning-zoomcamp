@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# VIM
+*.swp
+*.swo
+*.swm
+*.swn
+
