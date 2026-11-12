@@ -1,0 +1,142 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+
+url2 = 'AI_Resume_Screening.csv'
+url1 = 'resume_dataset_200k_enhanced.csv'
+url = 'automated_recruitment_analytics.csv'
+
+df = pd.read_csv(url)
+
+df.columns = df.columns.str.lower().str.replace(" ", "_")
+
+del df['candidate_id']
+del df['resume_text']
+del df['ai_score_(0-100)']
+#    Index(['resume_id', 'name', 'skills', 'experience_(years)', 'education',
+#       'certifications', 'job_role', 'recruiter_decision',
+#       'salary_expectation_($)', 'projects_count', 'ai_score_(0-100)'],
+#      dtype='str')
+#
+
+#unique_skill_strings = df['skills'].unique()
+#
+#skills_set = set()
+#
+#for skills in unique_skill_strings:
+#    for s in str(skills).split(','):
+#        cleaned_skill = s.strip().lower()
+#        if cleaned_skill:
+#            skills_set.add(cleaned_skill)
+#
+#print(skills_set)
+
+
+skills_list = [
+    'c++', 
+    'linux', 
+    'machine learning', 
+    'python', 
+    'deep learning', 
+    'react', 
+    'java', 
+    'pytorch', 
+    'networking', 
+    'nlp', 
+    'ethical hacking', 
+    'cybersecurity', 
+    'sql', 
+    'tensorflow'
+]
+
+df = df.dropna(subset=['skills'])
+
+df_full_train, df_test = train_test_split(df, test_size=0.2, random_state=42)
+df_train, df_val = train_test_split(df_full_train, test_size=0.25, random_state=42)
+
+df_train = df_train.reset_index(drop=True)
+df_val = df_val.reset_index(drop=True)
+df_test = df_test.reset_index(drop=True)
+
+y_train = df_train['recruiter_decision'].values
+y_val = df_val['recruiter_decision'].values
+y_test = df_test['recruiter_decision'].values
+
+del df_train['recruiter_decision']
+del df_val['recruiter_decision']
+del df_test['recruiter_decision']
+
+def prepare_dicts(df, skills):
+    dicts = []
+    for _, row in df.iterrows():
+        row_dict = {
+            'job_role': row['job_role'],
+            'experience_(years)': row['experience_(years)'],
+            'education': row['education'] 
+        }
+
+        candidate_skills = { s.strip().lower() for s in row['skills'].split(',') if s.strip() }
+
+        for skill in skills:
+            if skill in candidate_skills:
+                row_dict[skill] = 1
+        dicts.append(row_dict)
+
+    return dicts
+
+train_dicts = prepare_dicts(df_train, skills_list)
+val_dicts = prepare_dicts(df_val, skills_list)
+
+dv = DictVectorizer(sparse=False)
+X_train = dv.fit_transform(train_dicts)
+X_val = dv.transform(val_dicts)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict_proba(X_val)[:, 1]
+auc_score = roc_auc_score(y_val, y_pred)
+print(auc_score)
+print(pd.Series(y_train).value_counts(normalize=True))
+
+
+
+
+
+
+def get_set_from_string(column, prefix=None):
+    if prefix is None:
+        prefix = ""
+
+    new_set = set()
+    unique_skill_strings = column.unique()
+    
+    for skills in unique_skill_strings:
+        for s in str(skills).split(','):
+            cleaned_skill = s.strip().lower().replace(" ", "_")
+
+            if cleaned_skill:
+                new_set.add(prefix+cleaned_skill)
+
+    return new_set
+
+interaction_rows = []
+
+def build_interaction_features(df):
+
+    for index, row in df.iterrows():
+        job = str(row['job_title']).strip().lower().replace(' ', '_')
+
+        skills = [s.strip().lower().replace(' ', '_') for s in str(row['required_skills']).split(',')]
+        feature_name = f"{job}_{skill}"
+
+        required_skills_feautres = get_set_from_string(df, f"{job}_" )
+
+    interaction_df = pd.DataFrame(interaction_rows).fillna(0)
+    return interaction_df
+
+
+
