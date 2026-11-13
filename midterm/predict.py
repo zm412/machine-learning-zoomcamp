@@ -3,6 +3,7 @@ import pickle
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask_cors import CORS
 
 from model import normalize_record
 
@@ -13,7 +14,7 @@ with open(model_file, 'rb') as f_in:
     dv, model = pickle.load(f_in)
 
 app = Flask('churn')
-
+CORS(app)
 
 @app.route('/predict', methods=['POST'])
 def predict():
