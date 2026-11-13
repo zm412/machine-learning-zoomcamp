@@ -26,3 +26,6 @@ pd.set_option('display.width', 1000)
 # Prevent truncation of long text inside cells
 pd.set_option('display.max_colwidth', None)
 
+# Show full arrays without truncation
+np.set_printoptions(threshold=np.inf, linewidth=1000)
+

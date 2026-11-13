@@ -7,7 +7,7 @@ from flask import jsonify
 from model import normalize_record
 
 
-model_file = 'model_file.bin'
+model_file = 'pipeline.bin'
 
 with open(model_file, 'rb') as f_in:
     dv, model = pickle.load(f_in)
@@ -18,7 +18,6 @@ app = Flask('churn')
 @app.route('/predict', methods=['POST'])
 def predict():
     survey = request.get_json()
-    print(survey, 'FFFFFFFFFFFFFFFFFFFFff')
 
     record = normalize_record([survey])
 

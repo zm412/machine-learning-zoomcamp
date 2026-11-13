@@ -71,7 +71,7 @@ print(auc_score)
 y_pred_bin = (y_pred >= 0.5).astype(int)
 
 
-output_file = 'model_file.bin'
+output_file = 'pipeline.bin'
 
 with open(output_file, 'wb') as f_out:
     pickle.dump((dv, model), f_out)
