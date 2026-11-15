@@ -1,4 +1,5 @@
 # ML Zoomcamp 2026 deployment release - midterm project
+https://raw.githubusercontent.com/zm412/machine-learning-zoomcamp/refs/heads/main/midterm/automated_recruitment_analytics.csv
 
 This directory contains the frozen lead-scoring artifact used by Homework 5
 and Homework 10. It is trained from
@@ -34,3 +35,5 @@ The API exposes `GET /health` and `POST /predict`. The model artifact is
 addressed by its checksum in `model_metadata.json`; the API health response
 also reports the feature-default checksum. The Dockerfile pins the Python and
 uv image digests and installs from the checked-in lockfile.
+
+https://career-oracle-ml.netlify.app

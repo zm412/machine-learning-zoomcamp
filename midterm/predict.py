@@ -21,6 +21,7 @@ def predict():
     survey = request.get_json()
 
     record = normalize_record([survey])
+    print(record, 'RRRRRRRRR')
 
     X = dv.transform(record)
     y_pred = model.predict_proba(X)[0, 1]
