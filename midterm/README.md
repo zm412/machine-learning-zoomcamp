@@ -38,20 +38,21 @@ The goal of this project is to build a machine learning classification service t
 * **Winning Model:** **Logistic Regression ($C = 1.0$)** achieved the highest validation ROC-AUC.
      
      Model Comparison (Validation ROC-AUC):
-     Model                      Best hyperparameters                       Val ROC-AUC   
-    ---                        ---                                        ---            
-     **Logistic Regression**    `C=1.0`, `class_weight='balanced'`         **0.9235**    
-     XGBoost                    best of grid                               0.9174        
-     Random Forest              best of grid, `class_weight='balanced'`    0.9104        
-     Decision Tree              best of grid                               0.8248        
- 
+| Model                   | Best hyperparameters                    | Val ROC-AUC |
+|-------------------------|-----------------------------------------|-------------|
+| **Logistic Regression** | `C=1.0`, `class_weight='balanced'`      | **0.9235**  |
+| XGBoost                 | best of grid                            | 0.9174      |
+| Random Forest           | best of grid, `class_weight='balanced'` | 0.9104      |
+| Decision Tree           | best of grid                            | 0.8248      |
+
 * **Decision threshold tuning:** A probability-threshold sweep from 0.00 to 1.00 in steps of 0.01 (`research_best_model`) selected **`0.60`** as the F1-optimal cutoff on the validation set. At this threshold, the final model achieves the following performance on the minority `Hired` class:
 
- Metric (Validation)    Score        
- **F1-Score**             **0.6441**   
- Precision              0.6129       
- Recall                 0.6786       
-     
+ | Metric (Validation) | Score |
+  |---|---|
+| **F1-Score** | **0.6441** |
+| Precision    | 0.6129     |
+| Recall       | 0.6786     |
+
   The fitted `DictVectorizer` and model are exported together to `pipeline.bin`, and the API applies this `0.60` threshold to `hire_probability` to produce the binary `hire` recommendation.
 
 ## Scripts
