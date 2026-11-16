@@ -56,8 +56,8 @@ The goal of this project is to build a machine learning classification service t
   The fitted `DictVectorizer` and model are exported together to `pipeline.bin`, and the API applies this `0.60` threshold to `hire_probability` to produce the binary `hire` recommendation.
 
 ## Scripts
-notebook.ipynb - data cleaning, EDA, feature importance, model tuning
-train.py - defines preprocessing & training utilities, fits the final model, and saves pipeline.bin
+* **notebook.ipynb - data cleaning, EDA, feature importance, model tuning
+* **train.py - defines preprocessing & training utilities, fits the final model, and saves pipeline.bin
 
 ## Reproducibility
 ### Local run
@@ -82,15 +82,15 @@ The model is deployed on the cloud service Render. Since the account is free, th
 The API exposes `GET /health` and `POST /predict`. 
 
 ## Environment
-pyproject.toml
-uv.lock
-Dockerfile
+* **pyproject.toml
+* **uv.lock
+* **Dockerfile
 
 ### Cloud deployment
 The core deliverable is a containerized REST API (`predict.py`) deployed on Render:
 * **Live Prediction Service:** `https://machine-learning-zoomcamp.onrender.com/predict`
-* **Actionable Self-Assessment:** Candidates can test how targeting different job titles or adding specific skills shifts their predicted fit—helping them focus applications where their profile is most competitive and identify high-impact skill gaps before applying. 
-* **Any client** - whether a backend service, a web frontend, or a quick `curl` / Postman request—can send a JSON payload with a candidate's profile and target role to the `/predict` endpoint and receive:
+* **Actionable Self-Assessment:** Candidates can test how targeting different job titles or adding specific skills shifts their predicted fit - helping them focus applications where their profile is most competitive and identify high-impact skill gaps before applying. 
+* **Any client** - whether a backend service, a web frontend, or a quick `curl` / Postman request - can send a JSON payload with a candidate's profile and target role to the `/predict` endpoint and receive:
   1. **hire_probability:** The predicted likelihood of a positive hiring outcome based on historical patterns for that role type.
   2. **Binary Recommendation (hire):** A binary classification tuned at a `0.60` decision threshold to balance precision and recall.
   
@@ -98,7 +98,7 @@ The core deliverable is a containerized REST API (`predict.py`) deployed on Rend
 ```
 curl -X POST https://machine-learning-zoomcamp.onrender.com/predict \
   -H "Content-Type: application/json" \
-  -d '{"job_title": "Data Scientist", "skills": "python, sql", "experience_years": 3, "education": "Masters"}'
+  -d '{"job_title": "Data Scientist", "skills": "python, sql", "experience_years": 3, "education": "B.Sc."}'
   
 ```
  

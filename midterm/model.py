@@ -48,12 +48,13 @@ KNOWN_SKILLS = [
 def normalize_record(rows):
     dicts = []
     for row in rows:
-        job = str(row['job_title']).strip().lower().replace(' ', '_')
+        job_title_raw = str(row['job_title']).strip().lower()
+        job = job_title_raw.replace(' ', '_')
         
         row_dict = {
-            'job_title': row['job_title'],
+            'job_title': job_title_raw,
             'experience_years': row['experience_years'],
-            'education': row['education']
+            'education': str(row['education']).strip()
         }
 
         candidate_skills = {s.strip().lower() for s in str(row['skills']).split(',') if s.strip()}
