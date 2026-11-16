@@ -8,11 +8,11 @@ ENV PATH="/code/.venv/bin:$PATH" \
 
 WORKDIR /code
 
-COPY pyproject.toml uv.lock .python-version ./
+COPY pyproject.toml uv.lock ./
 
 RUN uv sync --locked --no-dev --no-install-project
 
-COPY model.py predict.py pipeline.bin q6_test.py ./
+COPY model.py predict.py pipeline.bin ./
 
 EXPOSE 9696
 

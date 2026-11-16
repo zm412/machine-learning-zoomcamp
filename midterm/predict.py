@@ -13,19 +13,22 @@ model_file = 'pipeline.bin'
 with open(model_file, 'rb') as f_in:
     dv, model = pickle.load(f_in)
 
-app = Flask('churn')
+app = Flask('hire_probability')
 CORS(app)
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'})
 
 @app.route('/predict', methods=['POST'])
 def predict():
     survey = request.get_json()
 
     record = normalize_record([survey])
-    print(record, 'RRRRRRRRR')
 
     X = dv.transform(record)
     y_pred = model.predict_proba(X)[0, 1]
-    result = y_pred >= 0.5
+    result = y_pred >= 0.6
 
     result = {
         'hire_probability': float(y_pred),

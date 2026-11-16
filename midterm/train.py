@@ -11,6 +11,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import precision_score, recall_score
+from sklearn.metrics import mutual_info_score
+from sklearn.feature_selection import mutual_info_classif
 import xgboost as xgb
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -43,6 +45,7 @@ del df_train['outcome']
 del df_val['outcome']
 del df_test['outcome']
 
+
 train_dicts = normalize_record(df_train.to_dict(orient="records"))
 val_dicts = normalize_record(df_val.to_dict(orient='records'))
 
@@ -50,6 +53,31 @@ dv = DictVectorizer(sparse=True)
 X_train = dv.fit_transform(train_dicts)
 
 X_val = dv.transform(val_dicts)
+
+def feature_evaluation(df, X_train, y_train, dv):
+    mi_parsed = mutual_info_classif(X_train, y_train, random_state=42)
+    feature_names = dv.get_feature_names_out()
+
+    df_mi = pd.DataFrame({'feature': feature_names, 'mi_score': mi_parsed }).sort_values(by='mi_score', ascending=False)
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='mi_score', y='feature', data=df_mi.head(15), color='teal')
+    plt.title('Top 15 Parsed Features (Mutual Information)')
+    plt.xlabel('Mutual Information Score')
+    plt.ylabel('Feature')
+    plt.tight_layout()
+    plt.show()
+
+def collect_unique_skills(series):
+    skills_set = set()
+
+    for skills in series.dropna().unique():
+        for s in str(skills).split(','):
+            cleaned_skill = s.strip().lower()
+
+            if cleaned_skill:
+                skills_set.add(cleaned_skill)
+
+    return sorted(list(skills_set))
 
 def research_best_model():
     thresholds = np.linspace(0, 1, 101)
@@ -69,11 +97,13 @@ def research_best_model():
     best_t_idx = np.argmax(f1_scores)
     best_threshold = thresholds[best_t_idx]
     best_f1 = f1_scores[best_t_idx]
+    best_precision = precisions[best_t_idx]
+    best_recall = recalls[best_t_idx]
 
-    print(
-        f'Optimal Threshold by F1-Score: {best_threshold:.2f} with F1:'
-        f' {best_f1:.4f}'
-    )
+    print(f'Optimal Threshold: {best_threshold:.2f}')
+    print(f'F1-Score: {best_f1:.4f}')
+    print(f'Precision: {best_precision:.4f}')
+    print(f'Recall: {best_recall:.4f}')
 
     plt.figure(figsize=(10, 6))
     plt.plot(thresholds, precisions, label='Precision', color='blue', linestyle='--')
@@ -221,4 +251,3 @@ output_file = 'pipeline.bin'
 
 with open(output_file, 'wb') as f_out:
     pickle.dump((dv, model), f_out)
-
